@@ -1,0 +1,2 @@
+Réservation de ressources
+Créer un SaaS permettant de consulter les disponibilités et de réserver une ressource : salle, véhicule, ordinateur ou équipement partagé. Le système doit notamment éviter les réservations incompatibles.
