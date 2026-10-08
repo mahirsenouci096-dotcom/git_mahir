@@ -8,11 +8,37 @@ Le projet ResourceHub vise à centraliser la gestion des réservations de ressou
 ### US-01 — Consulter la disponibilité d’une ressource
 En tant qu’utilisateur, je veux consulter la disponibilité d’une ressource selon une date et une plage horaire, afin de choisir un créneau compatible avec mon besoin.
 
-Critères d’acceptation :
-- L’utilisateur peut sélectionner un type de ressource.
-- Il peut choisir une date et une plage horaire.
-- Le système affiche les créneaux disponibles et indisponibles.
-- Les disponibilités sont visibles clairement par couleur ou statut.
+**Description détaillée :**
+L'utilisateur doit pouvoir accéder à une vue de disponibilité simple et intuitive. Il sélectionne d'abord le type de ressource (salle, véhicule, ordinateur, équipement), puis une date et une plage horaire. Le système affiche immédiatement les ressources disponibles et occupées, avec un code couleur clair : vert pour disponible, rouge pour occupé, gris pour indisponible.
+
+**Critères d'acceptation :**
+- L'utilisateur peut sélectionner un type de ressource parmi une liste prédéfinie.
+- Il peut choisir une date via un calendrier ou un champ de texte (format JJ/MM/AAAA).
+- Il peut définir une plage horaire (heure de début et fin, avec pas de 15 min).
+- Le système affiche les créneaux disponibles et indisponibles sous forme de calendrier ou tableau horaire.
+- Les disponibilités sont visibles clairement par couleur (vert/rouge) ou par icône.
+- L'interface est responsive et accessible sur mobile.
+- Le chargement des disponibilités prend moins de 2 secondes.
+
+**Scénarios d'usage :**
+1. L'utilisateur arrive sur la page, sélectionne "Salle de réunion", choisit le 15/10/2026 de 14h00 à 16h00 → il voit que les salles A et C sont libres, la salle B est occupée.
+2. L'utilisateur change la plage horaire à 16h00 à 18h00 → le système met à jour les disponibilités en temps réel.
+3. L'utilisateur navigue sur plusieurs jours → les filtres restent actifs.
+
+**Règles métier :**
+- Une ressource est disponible si aucune réservation confirmée ne chevauche le créneau demandé.
+- Les créneaux de maintenance ou indisponibilité sont bloqués (affichés en gris).
+- Les réservations annulées ne bloquent pas la ressource.
+- Les créneaux sont affichés par incrément de 15 minutes minimum.
+
+**Dépendances :**
+- Base de données contenant les ressources et leurs réservations.
+- Configuration des horaires de fonctionnement par type de ressource.
+
+**Notes techniques :**
+- Appel API : `GET /resources?type={type}&date={date}&start={start}&end={end}`
+- Réponse : liste des ressources avec statut de disponibilité.
+- Cache : mettre en cache les disponibilités pendant 5 minutes pour optimiser les requêtes.
 
 ### US-02 — Réserver une ressource disponible
 En tant qu’utilisateur, je veux réserver une ressource disponible, afin de sécuriser mon besoin rapidement.
