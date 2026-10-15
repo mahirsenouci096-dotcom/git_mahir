@@ -1,0 +1,18 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: local
+    hooks:
+      - id: tests-couverture
+        name: Tests et couverture minimale (80 %)
+        entry: bash scripts/verifier.sh
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages:
+          - pre-commit

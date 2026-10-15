@@ -1,0 +1,6 @@
+.coverage
+.coverage.*
+.venv/
+__pycache__/
+htmlcov/
+*.py[cod]

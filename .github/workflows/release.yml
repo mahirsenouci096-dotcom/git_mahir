@@ -1,0 +1,58 @@
+name: Publish release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release tag, for example v1.0.0
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify tests and coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require main branch
+        env:
+          REF_NAME: ${{ github.ref }}
+        run: |
+          if [[ "$REF_NAME" != "refs/heads/main" ]]; then
+            echo "::error::Releases must be started from main."
+            exit 1
+          fi
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Install development tools
+        run: python -m pip install -r requirements-dev.txt
+      - name: Run pre-commit checks and coverage gate
+        run: pre-commit run --all-files
+
+  publish:
+    name: Create tag and GitHub release
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Validate release version
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          if [[ ! "$RELEASE_VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Version must use the vMAJOR.MINOR.PATCH format, for example v1.0.0."
+            exit 1
+          fi
+      - name: Create tag and release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_VERSION: ${{ inputs.version }}
+          TARGET_SHA: ${{ github.sha }}
+        run: gh release create "$RELEASE_VERSION" --target "$TARGET_SHA" --generate-notes
