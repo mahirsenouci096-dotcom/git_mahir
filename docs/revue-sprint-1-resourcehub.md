@@ -12,7 +12,7 @@
 > - visualiser l’historique,
 > - confirmer la réservation.
 >
-> Durée : 2 semaines
+> Durée : 2 semaines<br>
 > Priorité : P0
 
 Cet objectif est recopié de [Sprint 1 - ResourceHub](sprint-1-resourcehub.md), sans reformulation après coup.
